@@ -1,4 +1,4 @@
-package com.challamani.liteprocess.service;
+package com.challamani.liteprocess.handler;
 
 import com.challamani.liteprocess.handler.ServiceTaskHandler;
 import com.challamani.liteprocess.model.*;
@@ -17,7 +17,7 @@ import java.util.concurrent.CompletableFuture;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class ProcessRuntimeTaskService {
+public class ProcessRuntimeTaskHandler {
 
     private final ServiceTaskHandler serviceTaskHandler;
 

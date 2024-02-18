@@ -1,14 +1,15 @@
 package com.challamani.liteprocess.model;
 
 
-import lombok.Data;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.Date;
 import java.util.Map;
 
 @Data
 @ToString
+@AllArgsConstructor
+@NoArgsConstructor
 public class LiteProcessInstance {
 
     private String id;
@@ -20,7 +21,7 @@ public class LiteProcessInstance {
     private Date completedDate;
     private String instanceKey;
     private LiteProcessStatus status;
-    private Integer liteProcessDefinitionVersion;
+    private String liteProcessDefinitionVersion;
     private Map<String, Object> processVariables;
 
 }

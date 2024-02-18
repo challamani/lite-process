@@ -1,11 +1,8 @@
 package com.challamani.liteprocess.runtime;
 
-import com.challamani.liteprocess.model.LiteProcessDefinition;
-import com.challamani.liteprocess.model.LiteProcessInstance;
-import com.challamani.liteprocess.model.LiteProcessStatus;
-import com.challamani.liteprocess.model.ProcessPayload;
+import com.challamani.liteprocess.model.*;
 import com.challamani.liteprocess.service.ProcessDefinitionService;
-import com.challamani.liteprocess.service.ProcessRuntimeTaskService;
+import com.challamani.liteprocess.handler.ProcessRuntimeTaskHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,7 +15,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class LiteProcessRuntimeImpl implements LiteProcessRuntime {
 
-    private final ProcessRuntimeTaskService processRuntimeTaskService;
+    private final ProcessRuntimeTaskHandler processRuntimeTaskHandler;
     private final ProcessDefinitionService processDefinitionService;
 
     @Override
@@ -27,20 +24,21 @@ public class LiteProcessRuntimeImpl implements LiteProcessRuntime {
         LiteProcessDefinition liteProcessDefinition = processDefinitionService
                 .getProcessDefinitionByKey(processPayload.getLiteProcessDefinitionKey());
 
-        //Create process-instance,
-        LiteProcessInstance liteProcessInstance = new LiteProcessInstance();
-        liteProcessInstance.setId(UUID.randomUUID().toString());
-        liteProcessInstance.setLiteProcessDefinitionId(liteProcessDefinition.getId());
-        liteProcessInstance.setLiteProcessDefinitionKey(liteProcessInstance.getLiteProcessDefinitionKey());
-        liteProcessInstance.setInitiator("system");
-        liteProcessInstance.setLiteProcessDefinitionVersion(1);
-        liteProcessInstance.setStatus(LiteProcessStatus.RUNNING);
-        liteProcessInstance.setName(processPayload.getName());
-        liteProcessInstance.setStartDate(Calendar.getInstance().getTime());
-        liteProcessInstance.setInstanceKey(processPayload.getInstanceKey());
-        liteProcessInstance.setProcessVariables(processPayload.getVariables());
+        //Create process-instance
+        LiteProcessInstance liteProcessInstance = new LiteProcessInstanceBuilder()
+                .withId(UUID.randomUUID().toString())
+                .withInstanceKey(processPayload.getInstanceKey())
+                .withProcessDefinitionKey(liteProcessDefinition.getKey())
+                .withProcessDefinitionId(liteProcessDefinition.getId())
+                .withName(processPayload.getName())
+                .withInitiator("system")
+                .withProcessVariables(processPayload.getVariables())
+                .withStartDate(Calendar.getInstance().getTime())
+                .withStatus(LiteProcessStatus.RUNNING)
+                .withVersion("1.0")
+                .build();
 
-        processRuntimeTaskService.executeAsyncProcess(liteProcessInstance, liteProcessDefinition);
+        processRuntimeTaskHandler.executeAsyncProcess(liteProcessInstance, liteProcessDefinition);
         return liteProcessInstance;
     }
 
