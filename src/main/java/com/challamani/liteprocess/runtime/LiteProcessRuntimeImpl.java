@@ -38,7 +38,12 @@ public class LiteProcessRuntimeImpl implements LiteProcessRuntime {
                 .withVersion("1.0")
                 .build();
 
-        processRuntimeTaskHandler.executeAsyncProcess(liteProcessInstance, liteProcessDefinition);
+        processRuntimeTaskHandler.executeAsyncProcess(liteProcessInstance, liteProcessDefinition)
+                .exceptionallyAsync(throwable -> {
+                    //failure status need to update in DB
+                    log.info("exception while executing the service tasks {}", throwable);
+                    return liteProcessInstance;
+                });
         return liteProcessInstance;
     }
 

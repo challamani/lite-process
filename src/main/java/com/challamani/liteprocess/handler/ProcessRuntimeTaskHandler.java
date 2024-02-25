@@ -1,6 +1,5 @@
 package com.challamani.liteprocess.handler;
 
-import com.challamani.liteprocess.handler.ServiceTaskHandler;
 import com.challamani.liteprocess.model.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -67,11 +66,13 @@ public class ProcessRuntimeTaskHandler {
             Boolean gatewayResult = expression.getValue(serviceTaskContext, Boolean.class);
             log.info(">>> service-task {} expression {} value {}", currentTask.getName(), exclusiveGateway.getExpression(), gatewayResult);
             nextTaskName = gatewayResult ? exclusiveGateway.getOnTrue() : exclusiveGateway.getOnFalse();
-        }else {
+        } else {
             nextTaskName = currentTask.getNextTask();
         }
 
         if(Objects.nonNull(nextTaskName) && !nextTaskName.equalsIgnoreCase("_end")) {
+            log.info(">>> next serviceTask: {}",nextTaskName);
+
             ServiceTask nextTask = serviceTasks.stream().filter(serviceTask ->
                             serviceTask.getName().equalsIgnoreCase(nextTaskName)).findFirst()
                     .orElseThrow(() -> new RuntimeException("Invalid next service-task configured either in exclusive gateway section (or) nextTask"));
@@ -87,7 +88,6 @@ public class ProcessRuntimeTaskHandler {
                 inboundVariables.put(variableName, previous.getOutboundVariables().get(variableName)));*/
 
         inboundVariables.putAll(previous.getOutboundVariables());
-
         previous.getInboundVariables().forEach((key, value) -> inboundVariables.putIfAbsent(key,value));
         current.setInboundVariables(inboundVariables);
     }

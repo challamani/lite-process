@@ -12,8 +12,8 @@ public class AsyncExceptionHandler implements AsyncUncaughtExceptionHandler {
 
     @Override
     public void handleUncaughtException(Throwable ex, Method method, Object... params) {
-        log.error("Unexpected asynchronous exception at : "
-                + method.getDeclaringClass().getName() + "." + method.getName(), ex);
+        log.info("Unexpected asynchronous exception at : {}.{} {}"
+                ,method.getDeclaringClass().getName(), method.getName(), ex);
     }
 
 }

@@ -24,6 +24,7 @@ public class ProcessDefinitionService {
 
     @Autowired
     public ProcessDefinitionService(@Autowired ApplicationContext applicationContext) throws IOException {
+
         liteProcessDefinitionMap = new HashMap<>();
         Resource[] resources = applicationContext.getResources("classpath:/lite-process/*.json");
         if(Objects.nonNull(resources)){
